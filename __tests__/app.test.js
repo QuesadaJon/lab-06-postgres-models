@@ -30,6 +30,17 @@ describe('app test', () => {
         });
     });
 
+    it('gets all ramen via GET', async() => {
+        const ramen1 = await Ramen.insert({ brand: '123', type: 'cup', flavor: 'shrimp' });
+        const ramen2 = await Ramen.insert({ brand: '321', type: 'noodles', flavor: 'shitake' });
+        const ramen3 = await Ramen.insert({ brand: '456', type: 'buckwheat', flavor: 'shoyu' });
+
+        const response = await request(app)
+            .get('/api/v1/ramen');
+
+        expect(response.body).toEqual([ramen1, ramen2, ramen3]);
+    });
+
     it('finds a ramen by id via GET', async() => {
         const ramen = await Ramen.insert({ brand: 'ramen', type: 'brothy', flavor: 'beef' });
 
