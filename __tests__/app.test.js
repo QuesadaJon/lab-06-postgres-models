@@ -13,7 +13,7 @@ describe('app test', () => {
         return pool.end();
     });
 
-    it('creates new ramen via POST', async () => {
+    it('creates new ramen via POST', async() => {
         const response = await request(app)
             .post('/api/v1/ramen')
             .send({
@@ -30,7 +30,18 @@ describe('app test', () => {
         });
     });
 
-    it('finds a ramen by id via GET', async () => {
+    it('gets all ramen via GET', async() => {
+        const ramen1 = await Ramen.insert({ brand: '123', type: 'cup', flavor: 'shrimp' });
+        const ramen2 = await Ramen.insert({ brand: '321', type: 'noodles', flavor: 'shitake' });
+        const ramen3 = await Ramen.insert({ brand: '456', type: 'buckwheat', flavor: 'shoyu' });
+
+        const response = await request(app)
+            .get('/api/v1/ramen');
+
+        expect(response.body).toEqual([ramen1, ramen2, ramen3]);
+    });
+
+    it('finds a ramen by id via GET', async() => {
         const ramen = await Ramen.insert({ brand: 'ramen', type: 'brothy', flavor: 'beef' });
 
         const response = await request(app)
@@ -39,7 +50,7 @@ describe('app test', () => {
         expect(response.body).toEqual(ramen);
     });
 
-    it('updates a ramen by id via PUT', async () => {
+    it('updates a ramen by id via PUT', async() => {
         const ramen = await Ramen.insert({ brand: 'tokyo', type: 'dry', flavor: 'shoyu' });
 
         const response = await request(app)
@@ -58,12 +69,12 @@ describe('app test', () => {
         });
     });
 
-    it('deletes a ramen by id via DELETE', async () => {
+    it('deletes a ramen by id via DELETE', async() => {
         const ramen = await Ramen.insert({ brand: 'jons', type: 'extra dry', flavor: 'salt' });
 
         const response = await request(app)
             .delete(`/api/v1/ramen/${ramen.id}`);
 
-        expect(response.body).toEqual({});
+        expect(response.text).toEqual(`ramen with id of ${ramen.id} has been deleted`);
     });
 });
